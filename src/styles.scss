@@ -33,7 +33,18 @@ $Test-BigProfiles-theme: mat.define-light-theme((
 // that you are using.
 @include mat.all-component-themes($Test-BigProfiles-theme);
 
-/* You can add global styles to this file, and also import other style files */
+app-root{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
+.body{
+  //margin-top: 70px;
+  flex-grow: 1;
+  background-color: var(--primary-color);
+  // padding: 0 0px 50px;
+}
+/* You can add global styles to this file, and also import other style files */
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

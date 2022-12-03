@@ -1,9 +1,107 @@
-<p>Weeeeeeeeeeeeeee</p>
-<mat-form-field appearance="fill">
-    <mat-label>Choose a date</mat-label>
-    <input matInput [matDatepicker]="picker">
-    <mat-hint>MM/DD/YYYY</mat-hint>
-    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
-  
+<div class="main">
+
+    <section class="welcome-get-data p-5">
+
+        <div class="row justify-content-end">
+
+            <!-- white square - input -->
+            <form class="form-date col-12 col-md-3 bg-white rounded text-end p-3 d-flex flex-column align-items-center"
+                    [formGroup]="formGetDate"
+                    (ngSubmit)="formGetDate.valid ? formSubmit() : errorsForm()">
+
+                <!-- for start date -->
+                <div class="inputGroup mb-3 mt-3">
+
+                    <!-- get date -->
+                    <input type="date" 
+                            name="startDate" 
+                            id="startDate" 
+                            class="date-input"
+                            formControlName="startDate"
+                            >
+
+                            <!-- [(ngModel)]="formGetDate.startDate" -->
+
+                    <!-- get hours -->
+                    <select name="startHours" 
+                            id="startHours" 
+                            class="hours-input"
+                            formControlName="startHours">
+
+                        <option *ngFor="let sHours of counter(1,23)" 
+                                [value]="sHours">
+                            {{sHours}}
+                        </option>
+                        <option value="00">
+                            00
+                        </option>
+
+                    </select>
+
+                    <!-- get minutes -->
+                    <select name="startHours" 
+                            id="startMinutes" 
+                            class="minutes-input"
+                            formControlName="startMinutes">
+
+                        <option *ngFor="let sMinutes of counter(1,60)" 
+                                [value]="sMinutes">
+                            {{sMinutes}}
+                        </option>
+                        <option value="00">
+                            00
+                        </option>
+
+                    </select>
+                </div>
+
+                <!-- for end date -->
+                <div class="inputGroup mb-5">
+
+                    <!-- get date -->
+                    <input type="date" 
+                            name="endDate" 
+                            id="endDate" 
+                            class="date-input"
+                            formControlName="endDate">
+
+                    <!-- get hours -->
+                    <select name="endHours" 
+                            id="endHours" 
+                            class="hours-input"
+                            formControlName="endHours">
+
+                        <option *ngFor="let eHours of counter(1,23)" 
+                                [value]="eHours">
+                            {{eHours}}
+                        </option>
+                        <option value="00">
+                            00
+                        </option>
+
+                    </select>
+
+                    <!-- get minutes -->
+                    <select name="endHours" 
+                            id="endMinutes" 
+                            class="minutes-input"
+                            formControlName="endMinutes">
+
+                        <option *ngFor="let eMinutes of counter(1,60)" 
+                                [value]="eMinutes">
+                            {{eMinutes}}
+                        </option>
+                        <option value="00">
+                            00
+                        </option>
+                    </select>
+                </div>
+
+                <button class="btn btn-success" type="submit">
+                    Analizza
+                </button>
+            </form>
+        </div>
+        
+    </section>
+</div>d>

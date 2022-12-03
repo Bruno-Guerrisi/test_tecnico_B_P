@@ -7,15 +7,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from './shared/shared/shared.module';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DataAnalyzerComponent } from './pages/data-explore/data-analyzer/data-analyzer/data-analyzer.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
 
-    /* Form control */
+    /* per le form control */
     FormsModule,
     ReactiveFormsModule,
 
