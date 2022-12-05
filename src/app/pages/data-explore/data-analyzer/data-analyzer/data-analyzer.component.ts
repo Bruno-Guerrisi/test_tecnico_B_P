@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { getAllDate } from 'src/app/models/get-all-date.model';
+import { ApiMonitoringService } from 'src/app/service/api-monitoring.service';
 
 @Component({
   selector: 'app-data-analyzer',
@@ -16,10 +17,12 @@ export class DataAnalyzerComponent implements OnInit {
     constructor(
         private FB: FormBuilder,
         private matSnackBar: MatSnackBar,
+        private apiMonitoringService: ApiMonitoringService
     ) { }
 
     ngOnInit(): void {
         this.setupFormGetDate()
+
     }
 
     setupFormGetDate() {
@@ -36,9 +39,12 @@ export class DataAnalyzerComponent implements OnInit {
 
     /*  */
     formSubmit() {
-        alert('submitted')
-        console.log(this.formGetDate.value)
+        this.apiMonitoringService.getMonitoring().subscribe({
+            next: (data: any) => {console.log(data)},
+            error: (err: any) => {console.log(err)}
+        })
     }
+    
     errorsForm(){
         const message = "Gentilmente compilare tutti i campi."
         this.matSnackBar.open( message, undefined, { duration: 2000 } );
