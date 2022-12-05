@@ -1,4 +1,4 @@
-<div class="main">
+<div class="main mb-5">
 
     <section class="welcome-get-data p-5">
 
@@ -107,4 +107,55 @@
         </div>
         
     </section>
-</div>d>
+
+    <section class="container log-container mt-5">
+
+        <div class="row first-log-data justify-content-md-between p-2 justify-content-center">
+
+            <!-- total calls count -->
+            <div class="col-12 col-md-4 mb-sm-4">
+
+                <div class="p-3 bg-white d-flex justify-content-between rounded">
+                    <span>Chiamate totali</span>
+                    <span>250231</span>
+                </div>
+            </div>
+
+            <!-- total errors count -->
+            <div class="col-12 col-md-4 mb-sm-4">
+
+                <div class="p-3 bg-white d-flex justify-content-between rounded">
+                    <span>Errori totali</span>
+                    <span>2321</span>
+                </div>
+            </div>
+
+            <!-- resp time count -->
+            <div class="col-12 col-md-4">
+
+                <div class="p-3 bg-white d-flex justify-content-between rounded">
+                    <span>Tempo risposta medio</span>
+                    <span>250ms</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row chart-section mt-5">
+
+            <div class="calls-over-times-containercol-12 col-md-6">
+
+                <canvas class="p-2 rounded bg-white" 
+                        id="calls-over-times">
+                </canvas>
+            </div>
+            <div class="errors-percentage-container col-12 col-md-6">
+
+                <canvas class="p-2 rounded bg-white" 
+                        id="errors-percentage">
+                </canvas>
+            </div>
+        </div>
+
+
+    </section>
+</div>

@@ -4,6 +4,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { getAllDate } from 'src/app/models/get-all-date.model';
 import { ApiMonitoringService } from 'src/app/service/api-monitoring.service';
 
+/* for chart */
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables)
+
 @Component({
   selector: 'app-data-analyzer',
   templateUrl: './data-analyzer.component.html',
@@ -22,6 +26,21 @@ export class DataAnalyzerComponent implements OnInit {
 
     ngOnInit(): void {
         this.setupFormGetDate()
+
+        this.chartSetup(
+            'calls-over-times',
+            'line', 
+            'Chiamata', 
+            'Chiamate nel tempo'
+        );
+
+        this.chartSetup(
+            'errors-percentage',
+            'bar', 
+            'Valori', 
+            'Distribuzione valori'
+        );
+        // this.chartSetup('errors-percentage','doughnut');
 
     }
 
@@ -58,6 +77,61 @@ export class DataAnalyzerComponent implements OnInit {
             
         }
         return array;
+    }
+
+
+    /*
+    * Chart sections
+    */
+    chartSetup(
+        id:string, 
+        type:any, 
+        itemName:string, 
+        title:string
+    ){
+
+        const myChart = new Chart( id, {
+
+            type: type,
+            data: {
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                datasets: [{
+                    label: itemName,
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: 'orange',
+                    borderColor: [
+                        'orange'
+                    ],
+                    borderWidth: 1
+                    
+                }]
+            },
+            options: {
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+                        position: 'top',
+
+                        label:{
+
+                            font: {
+                                size: 16
+                            }
+                        }
+                    },
+
+                    title: {
+                        display: true,
+                        text: title,
+                        font: {
+                            size: 18
+                        }
+                    }
+                },
+            }
+        });
     }
 
 
