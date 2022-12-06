@@ -12,96 +12,31 @@
                 <!-- for start date -->
                 <div class="inputGroup mb-3 mt-3">
 
-                    <!-- get date -->
-                    <input type="date" 
-                            name="startDate" 
-                            id="startDate" 
-                            class="date-input"
-                            formControlName="startDate"
-                            >
-
-                            <!-- [(ngModel)]="formGetDate.startDate" -->
-
-                    <!-- get hours -->
-                    <select name="startHours" 
-                            id="startHours" 
-                            class="hours-input"
-                            formControlName="startHours">
-
-                        <option *ngFor="let sHours of counter(1,23)" 
-                                [value]="sHours">
-                            {{sHours}}
-                        </option>
-                        <option value="00">
-                            00
-                        </option>
-
-                    </select>
-
-                    <!-- get minutes -->
-                    <select name="startHours" 
-                            id="startMinutes" 
-                            class="minutes-input"
-                            formControlName="startMinutes">
-
-                        <option *ngFor="let sMinutes of counter(1,60)" 
-                                [value]="sMinutes">
-                            {{sMinutes}}
-                        </option>
-                        <option value="00">
-                            00
-                        </option>
-
-                    </select>
+                    <!-- get start date -->
+                    <input type="datetime-local" 
+                        name="startDate" 
+                        id="startDate" 
+                        class="date-input"
+                        formControlName="startDate"
+                        value="2021-07-20T09:01:01"
+                    >
                 </div>
 
                 <!-- for end date -->
                 <div class="inputGroup mb-5">
 
-                    <!-- get date -->
-                    <input type="date" 
-                            name="endDate" 
-                            id="endDate" 
-                            class="date-input"
-                            formControlName="endDate">
-
-                    <!-- get hours -->
-                    <select name="endHours" 
-                            id="endHours" 
-                            class="hours-input"
-                            formControlName="endHours">
-
-                        <option *ngFor="let eHours of counter(1,23)" 
-                                [value]="eHours">
-                            {{eHours}}
-                        </option>
-                        <option value="00">
-                            00
-                        </option>
-
-                    </select>
-
-                    <!-- get minutes -->
-                    <select name="endHours" 
-                            id="endMinutes" 
-                            class="minutes-input"
-                            formControlName="endMinutes">
-
-                        <option *ngFor="let eMinutes of counter(1,60)" 
-                                [value]="eMinutes">
-                            {{eMinutes}}
-                        </option>
-                        <option value="00">
-                            00
-                        </option>
-                    </select>
+                    <!-- get end date -->
+                    <input type="datetime-local" 
+                        name="endDate" 
+                        id="endDate" 
+                        class="date-input"
+                        formControlName="endDate"
+                        value="2021-07-20T10:01:01"
+                    >
                 </div>
 
                 <button class="btn btn-success" type="submit">
                     Analizza
-                </button>
-                <button class="btn btn-success" (click)="formSubmit()">
-                    test
                 </button>
             </form>
         </div>
@@ -113,7 +48,7 @@
         <div class="row first-log-data justify-content-md-between p-2 justify-content-center">
 
             <!-- total calls count -->
-            <div class="col-12 col-md-4 mb-sm-4">
+            <div class="col-12 col-md-4 mb-4 mb-md-0">
 
                 <div class="p-3 bg-white d-flex justify-content-between rounded">
                     <span>Chiamate totali</span>
@@ -122,11 +57,11 @@
             </div>
 
             <!-- total errors count -->
-            <div class="col-12 col-md-4 mb-sm-4">
+            <div class="col-12 col-md-4 mb-sm-4 mb-4 mb-md-0">
 
                 <div class="p-3 bg-white d-flex justify-content-between rounded">
                     <span>Errori totali</span>
-                    <span>2321</span>
+                    <span class="text-danger fw-bold">2321</span>
                 </div>
             </div>
 
@@ -142,17 +77,56 @@
 
         <div class="row chart-section mt-5">
 
-            <div class="calls-over-times-containercol-12 col-md-6">
+            <div class="calls-over-times-container col-12 col-md-4 mb-4 mb-md-0 d-flex justify-content-center">
+
+                <canvas class="p-2 rounded bg-white h-100" 
+                        id="calls-over-times-donut">
+                </canvas>
+            </div>
+
+            <div class="errors-percentage-container col-12 col-md-8 d-flex justify-content-center">
 
                 <canvas class="p-2 rounded bg-white" 
                         id="calls-over-times">
                 </canvas>
             </div>
-            <div class="errors-percentage-container col-12 col-md-6">
+        </div>
+
+        <div class="row donut-log-section mt-5">
+
+            <div class="calls-over-times-container col-12 col-md-7 d-flex justify-content-center mb-4 mb-md-0">
 
                 <canvas class="p-2 rounded bg-white" 
                         id="errors-percentage">
                 </canvas>
+            </div>
+
+            <div class="calls-over-times-container col-12 col-md-5 d-flex justify-content-center">
+
+                <mat-accordion class="w-100">
+                    <mat-expansion-panel hideToggle *ngFor="let log of test">
+                        <mat-expansion-panel-header>
+
+                            <mat-panel-title>
+                                {{log.payload}}
+                            </mat-panel-title>
+
+                            <mat-panel-description
+                            [ngClass]="log.response_code == '200' ? 'text-success' : 'text-danger'">
+                                {{log.response_code}}
+                            </mat-panel-description>
+                            
+                            <i class="fa-solid fa-circle-info"></i>
+
+                        </mat-expansion-panel-header>
+
+                        <div class="d-flex justify-content-between">
+                            <p>{{log.creation_datetime}}</p>
+                            <p>{{log.response_time}}</p>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+                
             </div>
         </div>
 

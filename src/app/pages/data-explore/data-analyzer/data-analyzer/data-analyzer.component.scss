@@ -23,19 +23,13 @@
 .inputGroup{
 
     /* setup */
-    .date-input,
-    .hours-input,
-    .minutes-input{
+    .date-input{
         border: 0;
         margin: 0;
         background-color: var(--primary-color);
         padding: 0;
         height: 100%;
         color: white;
-
-        &:not(.minutes-input){
-            margin-right: 15px;
-        }
     }
 
     background-color: var(--primary-color);

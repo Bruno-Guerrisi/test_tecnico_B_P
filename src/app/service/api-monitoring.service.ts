@@ -15,7 +15,8 @@ export class ApiMonitoringService {
 
     getMonitoring():Observable<Array<string>> {
 
-        let url = `http://localhost:8000/api/v1/retrieve?date_from=2021-07-20T09:01:00&date_to=2021-07-20T15:21:00&page=1`
+        /* let url = `/api/v1/retrieve?date_from=2021-07-20T09:01:00&date_to=2021-07-20T15:21:00&page=1` */
+        let url = `/api/v1/retrieve?date_from=2021-07-20T09:01:00&date_to=2021-07-20T10:0:00&page=1`
         return this.http.get<any>(url)
     }
 }

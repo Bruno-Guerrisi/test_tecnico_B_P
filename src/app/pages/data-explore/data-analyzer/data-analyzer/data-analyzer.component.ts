@@ -15,6 +15,79 @@ Chart.register(...registerables)
 })
 export class DataAnalyzerComponent implements OnInit {
 
+    test: any = [
+        {
+            "key": 4,
+            "payload": "Messaggio Testuale",
+            "creation_datetime": "2021-07-20T10:21:59.001000",
+            "response_time": 33,
+            "response_code": 200
+        },
+        {
+            "key": 4,
+            "payload": "Messaggio Testuale",
+            "creation_datetime": "2021-07-20T10:21:59.001000",
+            "response_time": 17,
+            "response_code": 200
+        },
+        {
+            "key": 4,
+            "payload": "Messaggio Testuale",
+            "creation_datetime": "2021-07-20T10:21:59.001000",
+            "response_time": 37,
+            "response_code": 200
+        },
+        {
+            "key": 4,
+            "payload": "Messaggio Testuale",
+            "creation_datetime": "2021-07-20T10:21:59.001000",
+            "response_time": 27,
+            "response_code": 500
+        },
+        {
+            "key": 4,
+            "payload": "Messaggio Testuale",
+            "creation_datetime": "2021-07-20T10:21:59.001000",
+            "response_time": 46,
+            "response_code": 200
+        },
+        {
+            "key": 4,
+            "payload": "Messaggio Testuale",
+            "creation_datetime": "2021-07-20T10:21:59",
+            "response_time": 49,
+            "response_code": 200
+        },
+        {
+            "key": 4,
+            "payload": "Messaggio Testuale",
+            "creation_datetime": "2021-07-20T10:21:59",
+            "response_time": 15,
+            "response_code": 500
+        },
+        {
+            "key": 4,
+            "payload": "Messaggio Testuale",
+            "creation_datetime": "2021-07-20T10:21:59",
+            "response_time": 30,
+            "response_code": 200
+        },
+        {
+            "key": 4,
+            "payload": "Messaggio Testuale",
+            "creation_datetime": "2021-07-20T10:21:59",
+            "response_time": 44,
+            "response_code": 200
+        },
+        {
+            "key": 4,
+            "payload": "Messaggio Testuale",
+            "creation_datetime": "2021-07-20T10:21:59",
+            "response_time": 24,
+            "response_code": 200
+        }
+    ]
+
     /* group of data */
     formGetDate: FormGroup | any;
 
@@ -40,19 +113,20 @@ export class DataAnalyzerComponent implements OnInit {
             'Valori', 
             'Distribuzione valori'
         );
-        // this.chartSetup('errors-percentage','doughnut');
+
+        this.chartDonutSetup(
+            'calls-over-times-donut', 
+            '6546', 
+            '46578', 
+            'Chiamate totali'
+        );
 
     }
 
     setupFormGetDate() {
         this.formGetDate = this.FB.group({
-            startDate: [ '' , Validators.required],
-            startHours: [ '' , Validators.required],
-            startMinutes: [ '' , Validators.required],
-            endDate: [ '' , Validators.required],
-            endHours: [ '' , Validators.required],
-            endMinutes: [ '' , Validators.required]
-
+            startDate: [ '2021-07-20T09:01:01' , Validators.required],
+            endDate: [ '2021-07-20T10:01:01' , Validators.required],
         })
     }
 
@@ -120,6 +194,48 @@ export class DataAnalyzerComponent implements OnInit {
                                 size: 16
                             }
                         }
+                    },
+
+                    title: {
+                        display: true,
+                        text: title,
+                        font: {
+                            size: 18
+                        }
+                    }
+                },
+            }
+        });
+    }
+
+    chartDonutSetup(
+        id:string, 
+        errorsRes:string,
+        successRes:string,
+        title:string
+    ){
+
+        const myChart = new Chart( id, {
+
+            type: 'doughnut',
+            data: {
+                labels: ['Errors', 'Success'],
+                datasets: [{
+                    
+                    label: 'Chiamate totali',
+                    data: [`${errorsRes}`, `${successRes}`],
+                    backgroundColor: ['red', 'green'],
+                      
+                    
+                }]
+            },
+            options: {
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+                        position: 'top',
                     },
 
                     title: {
