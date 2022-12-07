@@ -44,7 +44,7 @@
     </section>
 
     <section class="container log-container mt-5"
-            [class]="ApiMonitorinResults ? '': 'd-none'">
+            [class]="ApiMonitorinResults != null ? '': 'd-none'">
 
         <div class="row first-log-data justify-content-md-between p-2 justify-content-center">
 
@@ -78,21 +78,24 @@
 
         <div class="row chart-section mt-5">
 
+            <!-- total calls table and error percentage -->
             <div class="calls-over-times-container col-12 col-md-4 mb-4 mb-md-0 d-flex justify-content-center">
 
                 <div class="p-2 rounded bg-white h-100 w-100 chart-box">
 
-                    <h2 class="text-center">Chiamate Totali</h2>
+                    <h2 class="text-center mb-1">Chiamate Totali</h2>
+                    <h2 class="text-center">{{ ((totalErrors / totalCalls) * 100).toFixed(0) }}% di Errori</h2>
 
                     <canvas id="calls-over-times-donut"></canvas>
                 </div>
             </div>
 
+            <!-- chart calls made over time -->
             <div class="errors-percentage-container col-12 col-md-8 d-flex justify-content-center chart">
 
                 <div class="p-2 rounded bg-white h-100 w-100 chart-box">
 
-                    <h2 class="text-center">Chiamate nel tempo</h2>
+                    <h2 class="text-center">Chiamate riuscite nel tempo</h2>
 
                     <div>
                         <div class="chart-body">
@@ -105,6 +108,7 @@
 
         <div class="row donut-log-section mt-5">
 
+            <!-- chart distribution of values on each key -->
             <div class="calls-over-times-container col-12 col-md-7 d-flex justify-content-center align-items-start mb-4 mb-md-0">
 
                 <div class="p-2 rounded bg-white w-100 chart-box">
@@ -119,6 +123,7 @@
                 </div>
             </div>
 
+            <!-- table containing last 10 logs -->
             <div class="calls-over-times-container col-12 col-md-5 d-flex flex-column align-items-center bg-white rounded pt-3 pb-3">
 
                 <h2 class="text-center">Logs delle ultime 10 chiamate</h2>
@@ -153,4 +158,16 @@
 
 
     </section>
+
+    <!-- usage info -->
+    <div class="d-flex justify-content-center mt-5"
+        *ngIf="ApiMonitorinResults == null && loader == false">
+
+        <div class="alert alert-orange" role="alert">
+            Inserire un range temporale per analizzare i dati
+        </div>
+    </div>
+
+    <!-- spinner -->
+    <app-loader *ngIf="loader" data-aos="zoom-out-up"></app-loader>
 </div>

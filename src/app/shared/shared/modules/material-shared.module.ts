@@ -29,7 +29,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatSortModule} from "@angular/material/sort";
 import {MatBadgeModule} from '@angular/material/badge';
 
-
+/* get all material components */
 const matModules = [
     MatBadgeModule,
     MatToolbarModule,

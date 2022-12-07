@@ -7,6 +7,7 @@ import { ApiMonitoringService } from 'src/app/service/api-monitoring.service';
 /* for chart */
 import { Chart, registerables } from 'chart.js';
 import { ApiMonitoring } from 'src/app/models/api-monitoring.model';
+import { delay } from 'rxjs';
 Chart.register(...registerables)
 
 @Component({
@@ -30,6 +31,8 @@ export class DataAnalyzerComponent implements OnInit {
     /* group of data */
     formGetDate: FormGroup | any;
 
+    loader: boolean = false;
+
     constructor(
         private FB: FormBuilder,
         private matSnackBar: MatSnackBar,
@@ -40,6 +43,7 @@ export class DataAnalyzerComponent implements OnInit {
         this.setupFormGetDate()
     }
 
+    /* setup formGroup */
     setupFormGetDate() {
         this.formGetDate = this.FB.group({
             startDate: [ '2021-07-20T09:01:01' , Validators.required],
@@ -47,8 +51,11 @@ export class DataAnalyzerComponent implements OnInit {
         })
     }
 
-    /*  */
+    /* get tracking api */
     formSubmit() {
+
+        this.loader = true;
+
         /* reset data */
         this.resetData()
 
@@ -56,97 +63,120 @@ export class DataAnalyzerComponent implements OnInit {
         const start = this.formGetDate.value.startDate;
         const end = this.formGetDate.value.endDate
         
-        this.apiMonitoringService.getMonitoring(start, end).subscribe({
+        /* call */
+        this.apiMonitoringService.getMonitoring(start, end)
+        .pipe(
+            delay(2000)
+
+        ).subscribe({
             next: (data: ApiMonitoring) => {
 
-                /* save all result */
-                this.ApiMonitorinResults = data
+                /* check if the data exists */
+                if (data.values.length == 0) {
 
-                /* variables for count calls e for each key*/
-                let key1:number = 0;
-                let key2:number = 0;
-                let key3:number = 0;
-                let key4:number = 0;
-                let key5:number = 0;
-                let key6:number = 0;
-
-                /* get useful data */
-                this.ApiMonitorinResults?.values.forEach(el => {
-
-                    this.totalCalls+= el.total_requests
-                    this.totalErrors+= el.total_errors
-                    this.responseTime+= el.total_response_time_ms
-
-                    /* get data for chart of calls made by time */
-                    this.dateCallsOverTime.push(el.creation_datetime.replace(/T/g, " "))
-                    this.numberCallsOverTime.push(el.total_requests)
-
-                    /* group calls by key */
-                    switch (el.key) {
-                        case 1:
-                            key1+= el.total_requests
-                            break;
-                        case 2:
-                            key2+= el.total_requests
-                            break;
-                        case 3:
-                            key3+= el.total_requests
-                            break;
-                        case 4:
-                            key4+= el.total_requests
-                            break;
-                        case 5:
-                            key5+= el.total_requests
-                            break;
-                        case 6:
-                            key6+= el.total_requests
-                            break;
-                    }
-
+                    this.resetData();
+                    const message = "Dati non disponibili in questo range di tempo."
+                    this.matSnackBar.open( message, undefined, { duration: 3000 } );
+                    this.loader = false;
                     
-                });
-                
-                /* get average response time */
-                this.responseTime = this.responseTime /this.totalCalls
-                
-                /* save count calls for each key */
-                this.countDistributionValues.push( key1, key2, key3, key4, key5, key6)
+                } else {
 
-                /* 
-                * generate charts 
-                */
+                    this.loader = false;
+                    /* save all result */
+                    this.ApiMonitorinResults = data
 
-                /* chart of total calls and errors */
-                this.chartDonutSetup(
-                    'calls-over-times-donut', 
-                    this.totalErrors, 
-                    (this.totalCalls - this.totalErrors),
-                );
+                    /* variables for count calls e for each key*/
+                    let key1:number = 0;
+                    let key2:number = 0;
+                    let key3:number = 0;
+                    let key4:number = 0;
+                    let key5:number = 0;
+                    let key6:number = 0;
 
+                    /* get useful data */
+                    this.ApiMonitorinResults?.values.forEach(el => {
 
-                /* chart of calls made by time */
-                this.chartSetup(
-                    'calls-over-times',
-                    'line',
-                    this.dateCallsOverTime,
-                    this.numberCallsOverTime,
-                    'Chiamata',
-                );
+                        this.totalCalls+= el.total_requests
+                        this.totalErrors+= el.total_errors
+                        this.responseTime+= el.total_response_time_ms
 
-                /* chart distribution of values for each key */
-                this.chartSetup(
-                    'errors-percentage',
-                    'bar', 
-                    ['Key 1','Key 2','Key 3','Key 4','Key 5','Key 6'],
-                    this.countDistributionValues,
-                    'Valore',
-                );
+                        /* get data for chart of calls made by time */
+                        this.dateCallsOverTime.push(el.creation_datetime.replace(/T/g, " "))
+                        this.numberCallsOverTime.push(el.total_requests - el.total_errors)
+
+                        /* group calls by key */
+                        switch (el.key) {
+                            case 1:
+                                key1+= el.total_requests
+                                break;
+                            case 2:
+                                key2+= el.total_requests
+                                break;
+                            case 3:
+                                key3+= el.total_requests
+                                break;
+                            case 4:
+                                key4+= el.total_requests
+                                break;
+                            case 5:
+                                key5+= el.total_requests
+                                break;
+                            case 6:
+                                key6+= el.total_requests
+                                break;
+                        }
+
+                        
+                    });
+                    
+                    /* get average response time */
+                    this.responseTime = this.responseTime /this.totalCalls
+                    
+                    /* save count calls for each key */
+                    this.countDistributionValues.push( key1, key2, key3, key4, key5, key6)
+
+                    /* 
+                    * generate charts 
+                    */
+
+                    /* chart of total calls and errors */
+                    this.chartDonutSetup(
+                        'calls-over-times-donut', 
+                        this.totalErrors, 
+                        (this.totalCalls - this.totalErrors),
+                    );
+
+                    /* chart of calls made by time */
+                    this.chartSetup(
+                        'calls-over-times',
+                        'line',
+                        this.dateCallsOverTime,
+                        this.numberCallsOverTime,
+                        'Riuscite',
+                        '#60f803'
+                    );
+
+                    /* chart distribution of values for each key */
+                    this.chartSetup(
+                        'errors-percentage',
+                        'bar', 
+                        ['Key 1','Key 2','Key 3','Key 4','Key 5','Key 6'],
+                        this.countDistributionValues,
+                        'Valore',
+                        '#35a7db'
+                    );
+                }
                 
             },
-            error: (err: any) => {console.log(err)}
+            error: (err: any) => {
+                this.matSnackBar.open( `Errore: ${err}`, undefined, { duration: 2000 } );
+            }
         })
+
+        console.log(this.ApiMonitorinResults)
     }
     
+    /* form filled out incorrectly */
     errorsForm(){
         const message = "Gentilmente compilare tutti i campi."
         this.matSnackBar.open( message, undefined, { duration: 2000 } );
@@ -173,6 +203,7 @@ export class DataAnalyzerComponent implements OnInit {
         labels: any,
         data: any,
         itemName:string,
+        color: string
     ){
 
         const myChart = new Chart( id, {
@@ -183,9 +214,9 @@ export class DataAnalyzerComponent implements OnInit {
                 datasets: [{
                     label: itemName,
                     data: data,
-                    backgroundColor: 'orange',
+                    backgroundColor: `${color}`,
                     borderColor: [
-                        'orange'
+                        `${color}`
                     ],
                     borderWidth: 1
                     
