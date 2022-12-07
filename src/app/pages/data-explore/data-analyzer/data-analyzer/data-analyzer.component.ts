@@ -6,6 +6,7 @@ import { ApiMonitoringService } from 'src/app/service/api-monitoring.service';
 
 /* for chart */
 import { Chart, registerables } from 'chart.js';
+import { ApiMonitoring } from 'src/app/models/api-monitoring.model';
 Chart.register(...registerables)
 
 @Component({
@@ -15,78 +16,16 @@ Chart.register(...registerables)
 })
 export class DataAnalyzerComponent implements OnInit {
 
-    test: any = [
-        {
-            "key": 4,
-            "payload": "Messaggio Testuale",
-            "creation_datetime": "2021-07-20T10:21:59.001000",
-            "response_time": 33,
-            "response_code": 200
-        },
-        {
-            "key": 4,
-            "payload": "Messaggio Testuale",
-            "creation_datetime": "2021-07-20T10:21:59.001000",
-            "response_time": 17,
-            "response_code": 200
-        },
-        {
-            "key": 4,
-            "payload": "Messaggio Testuale",
-            "creation_datetime": "2021-07-20T10:21:59.001000",
-            "response_time": 37,
-            "response_code": 200
-        },
-        {
-            "key": 4,
-            "payload": "Messaggio Testuale",
-            "creation_datetime": "2021-07-20T10:21:59.001000",
-            "response_time": 27,
-            "response_code": 500
-        },
-        {
-            "key": 4,
-            "payload": "Messaggio Testuale",
-            "creation_datetime": "2021-07-20T10:21:59.001000",
-            "response_time": 46,
-            "response_code": 200
-        },
-        {
-            "key": 4,
-            "payload": "Messaggio Testuale",
-            "creation_datetime": "2021-07-20T10:21:59",
-            "response_time": 49,
-            "response_code": 200
-        },
-        {
-            "key": 4,
-            "payload": "Messaggio Testuale",
-            "creation_datetime": "2021-07-20T10:21:59",
-            "response_time": 15,
-            "response_code": 500
-        },
-        {
-            "key": 4,
-            "payload": "Messaggio Testuale",
-            "creation_datetime": "2021-07-20T10:21:59",
-            "response_time": 30,
-            "response_code": 200
-        },
-        {
-            "key": 4,
-            "payload": "Messaggio Testuale",
-            "creation_datetime": "2021-07-20T10:21:59",
-            "response_time": 44,
-            "response_code": 200
-        },
-        {
-            "key": 4,
-            "payload": "Messaggio Testuale",
-            "creation_datetime": "2021-07-20T10:21:59",
-            "response_time": 24,
-            "response_code": 200
-        }
-    ]
+    /* container with all results + count: errors, calls, average time */
+    ApiMonitorinResults: ApiMonitoring | null = null;
+    totalCalls: number = 0;
+    totalErrors: number = 0;
+    responseTime: number = 0;
+
+    /* useful arrays for chart generation */
+    countDistributionValues: Array<number> = [];
+    dateCallsOverTime: Array<string> = [];
+    numberCallsOverTime: Array<number> = [];
 
     /* group of data */
     formGetDate: FormGroup | any;
@@ -99,28 +38,6 @@ export class DataAnalyzerComponent implements OnInit {
 
     ngOnInit(): void {
         this.setupFormGetDate()
-
-        this.chartSetup(
-            'calls-over-times',
-            'line', 
-            'Chiamata', 
-            'Chiamate nel tempo'
-        );
-
-        this.chartSetup(
-            'errors-percentage',
-            'bar', 
-            'Valori', 
-            'Distribuzione valori'
-        );
-
-        this.chartDonutSetup(
-            'calls-over-times-donut', 
-            '6546', 
-            '46578', 
-            'Chiamate totali'
-        );
-
     }
 
     setupFormGetDate() {
@@ -132,8 +49,100 @@ export class DataAnalyzerComponent implements OnInit {
 
     /*  */
     formSubmit() {
-        this.apiMonitoringService.getMonitoring().subscribe({
-            next: (data: any) => {console.log(data)},
+        /* reset data */
+        this.resetData()
+
+        /* get form fields */
+        const start = this.formGetDate.value.startDate;
+        const end = this.formGetDate.value.endDate
+        
+        this.apiMonitoringService.getMonitoring(start, end).subscribe({
+            next: (data: ApiMonitoring) => {
+
+                /* save all result */
+                this.ApiMonitorinResults = data
+
+                /* variables for count calls e for each key*/
+                let key1:number = 0;
+                let key2:number = 0;
+                let key3:number = 0;
+                let key4:number = 0;
+                let key5:number = 0;
+                let key6:number = 0;
+
+                /* get useful data */
+                this.ApiMonitorinResults?.values.forEach(el => {
+
+                    this.totalCalls+= el.total_requests
+                    this.totalErrors+= el.total_errors
+                    this.responseTime+= el.total_response_time_ms
+
+                    /* get data for chart of calls made by time */
+                    this.dateCallsOverTime.push(el.creation_datetime.replace(/T/g, " "))
+                    this.numberCallsOverTime.push(el.total_requests)
+
+                    /* group calls by key */
+                    switch (el.key) {
+                        case 1:
+                            key1+= el.total_requests
+                            break;
+                        case 2:
+                            key2+= el.total_requests
+                            break;
+                        case 3:
+                            key3+= el.total_requests
+                            break;
+                        case 4:
+                            key4+= el.total_requests
+                            break;
+                        case 5:
+                            key5+= el.total_requests
+                            break;
+                        case 6:
+                            key6+= el.total_requests
+                            break;
+                    }
+
+                    
+                });
+                
+                /* get average response time */
+                this.responseTime = this.responseTime /this.totalCalls
+                
+                /* save count calls for each key */
+                this.countDistributionValues.push( key1, key2, key3, key4, key5, key6)
+
+                /* 
+                * generate charts 
+                */
+
+                /* chart of total calls and errors */
+                this.chartDonutSetup(
+                    'calls-over-times-donut', 
+                    this.totalErrors, 
+                    (this.totalCalls - this.totalErrors),
+                );
+
+
+                /* chart of calls made by time */
+                this.chartSetup(
+                    'calls-over-times',
+                    'line',
+                    this.dateCallsOverTime,
+                    this.numberCallsOverTime,
+                    'Chiamata',
+                );
+
+                /* chart distribution of values for each key */
+                this.chartSetup(
+                    'errors-percentage',
+                    'bar', 
+                    ['Key 1','Key 2','Key 3','Key 4','Key 5','Key 6'],
+                    this.countDistributionValues,
+                    'Valore',
+                );
+                
+            },
             error: (err: any) => {console.log(err)}
         })
     }
@@ -143,35 +152,37 @@ export class DataAnalyzerComponent implements OnInit {
         this.matSnackBar.open( message, undefined, { duration: 2000 } );
     }
 
-    /* create a new array of the desired length */
-    counter(start: number, end: number) {
-        const array = [];
-        for (let index = start; index <= end; index++) {
-            array.push(index);
-            
-        }
-        return array;
-    }
+    resetData(){
 
+        /* reset all variables */
+        this.ApiMonitorinResults = null;
+        this.totalCalls = 0;
+        this.totalErrors = 0;
+        this.responseTime = 0;
+        this.countDistributionValues = [];
+        this.dateCallsOverTime = [];
+        this.numberCallsOverTime = [];
+    }
 
     /*
     * Chart sections
     */
     chartSetup(
         id:string, 
-        type:any, 
-        itemName:string, 
-        title:string
+        type:any,
+        labels: any,
+        data: any,
+        itemName:string,
     ){
 
         const myChart = new Chart( id, {
 
             type: type,
             data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                labels: labels,
                 datasets: [{
                     label: itemName,
-                    data: [12, 19, 3, 5, 2, 3],
+                    data: data,
                     backgroundColor: 'orange',
                     borderColor: [
                         'orange'
@@ -182,7 +193,7 @@ export class DataAnalyzerComponent implements OnInit {
             },
             options: {
                 responsive: true,
-
+                maintainAspectRatio: false,
                 plugins: {
 
                     legend: {
@@ -195,24 +206,26 @@ export class DataAnalyzerComponent implements OnInit {
                             }
                         }
                     },
-
-                    title: {
-                        display: true,
-                        text: title,
-                        font: {
-                            size: 18
-                        }
-                    }
                 },
             }
         });
+
+        /* get chart length and space between records */
+        const chart = document.querySelector<HTMLElement>('.chart-body');
+        const labelsCount = myChart.data.labels!.length;
+
+        if (labelsCount > 7) {
+
+            /* to increase the space between records change the number 35 */
+            const myWidth = 700 + ((labelsCount - 7) * 35)
+            chart!.style.width = `${myWidth}px`;
+        }
     }
 
     chartDonutSetup(
         id:string, 
-        errorsRes:string,
-        successRes:string,
-        title:string
+        errorsRes:string | number,
+        successRes:string | number
     ){
 
         const myChart = new Chart( id, {
@@ -222,7 +235,7 @@ export class DataAnalyzerComponent implements OnInit {
                 labels: ['Errors', 'Success'],
                 datasets: [{
                     
-                    label: 'Chiamate totali',
+                    label: 'Chiamate',
                     data: [`${errorsRes}`, `${successRes}`],
                     backgroundColor: ['red', 'green'],
                       
@@ -236,14 +249,6 @@ export class DataAnalyzerComponent implements OnInit {
 
                     legend: {
                         position: 'top',
-                    },
-
-                    title: {
-                        display: true,
-                        text: title,
-                        font: {
-                            size: 18
-                        }
                     }
                 },
             }

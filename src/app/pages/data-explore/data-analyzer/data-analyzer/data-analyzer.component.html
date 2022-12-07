@@ -43,7 +43,8 @@
         
     </section>
 
-    <section class="container log-container mt-5">
+    <section class="container log-container mt-5"
+            [class]="ApiMonitorinResults ? '': 'd-none'">
 
         <div class="row first-log-data justify-content-md-between p-2 justify-content-center">
 
@@ -52,7 +53,7 @@
 
                 <div class="p-3 bg-white d-flex justify-content-between rounded">
                     <span>Chiamate totali</span>
-                    <span>250231</span>
+                    <span>{{totalCalls}}</span>
                 </div>
             </div>
 
@@ -61,7 +62,7 @@
 
                 <div class="p-3 bg-white d-flex justify-content-between rounded">
                     <span>Errori totali</span>
-                    <span class="text-danger fw-bold">2321</span>
+                    <span class="text-danger fw-bold">{{totalErrors}}</span>
                 </div>
             </div>
 
@@ -70,7 +71,7 @@
 
                 <div class="p-3 bg-white d-flex justify-content-between rounded">
                     <span>Tempo risposta medio</span>
-                    <span>250ms</span>
+                    <span>{{responseTime.toFixed(0)}}ms</span>
                 </div>
             </div>
         </div>
@@ -79,32 +80,52 @@
 
             <div class="calls-over-times-container col-12 col-md-4 mb-4 mb-md-0 d-flex justify-content-center">
 
-                <canvas class="p-2 rounded bg-white h-100" 
-                        id="calls-over-times-donut">
-                </canvas>
+                <div class="p-2 rounded bg-white h-100 w-100 chart-box">
+
+                    <h2 class="text-center">Chiamate Totali</h2>
+
+                    <canvas id="calls-over-times-donut"></canvas>
+                </div>
             </div>
 
-            <div class="errors-percentage-container col-12 col-md-8 d-flex justify-content-center">
+            <div class="errors-percentage-container col-12 col-md-8 d-flex justify-content-center chart">
 
-                <canvas class="p-2 rounded bg-white" 
-                        id="calls-over-times">
-                </canvas>
+                <div class="p-2 rounded bg-white h-100 w-100 chart-box">
+
+                    <h2 class="text-center">Chiamate nel tempo</h2>
+
+                    <div>
+                        <div class="chart-body">
+                            <canvas id="calls-over-times"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="row donut-log-section mt-5">
 
-            <div class="calls-over-times-container col-12 col-md-7 d-flex justify-content-center mb-4 mb-md-0">
+            <div class="calls-over-times-container col-12 col-md-7 d-flex justify-content-center align-items-start mb-4 mb-md-0">
 
-                <canvas class="p-2 rounded bg-white" 
-                        id="errors-percentage">
-                </canvas>
+                <div class="p-2 rounded bg-white w-100 chart-box">
+
+                    <h2 class="text-center">Distribuzione valori</h2>
+
+                    <div>
+                        <div class="chart-body">
+                            <canvas id="errors-percentage"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="calls-over-times-container col-12 col-md-5 d-flex justify-content-center">
+            <div class="calls-over-times-container col-12 col-md-5 d-flex flex-column align-items-center bg-white rounded pt-3 pb-3">
+
+                <h2 class="text-center">Logs delle ultime 10 chiamate</h2>
 
                 <mat-accordion class="w-100">
-                    <mat-expansion-panel hideToggle *ngFor="let log of test">
+                    <mat-expansion-panel hideToggle 
+                        *ngFor="let log of ApiMonitorinResults?.logs">
                         <mat-expansion-panel-header>
 
                             <mat-panel-title>
@@ -121,8 +142,8 @@
                         </mat-expansion-panel-header>
 
                         <div class="d-flex justify-content-between">
-                            <p>{{log.creation_datetime}}</p>
-                            <p>{{log.response_time}}</p>
+                            <p>Data: {{log.creation_datetime | date : 'short'}}</p>
+                            <p>Tempo: {{log.response_time}} ms</p>
                         </div>
                     </mat-expansion-panel>
                 </mat-accordion>

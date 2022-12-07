@@ -13,10 +13,10 @@ export class ApiMonitoringService {
         private http: HttpClient
     ) { }
 
-    getMonitoring():Observable<Array<string>> {
+    getMonitoring(start:string, end:string, page:string | number = 1):Observable<any> {
 
         /* let url = `/api/v1/retrieve?date_from=2021-07-20T09:01:00&date_to=2021-07-20T15:21:00&page=1` */
-        let url = `/api/v1/retrieve?date_from=2021-07-20T09:01:00&date_to=2021-07-20T10:0:00&page=1`
+        let url = `/api/v1/retrieve?date_from=${start}&date_to=${end}&page=${page}`
         return this.http.get<any>(url)
     }
 }

@@ -41,3 +41,16 @@
 .first-log-data div{
     max-width: 350px;
 }
+
+.chart-box{
+
+    div{
+
+        overflow-x: scroll;
+    
+        .chart-body{
+            max-height: 450px;
+            overflow: hidden;
+        } 
+    }
+}
